@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <jemalloc/jemalloc.h>
+#include <cstdio>
+#include <cstdlib>
 
 int main() {
     printf("main func addr:%p\n", main);
