@@ -1,7 +1,3 @@
-#
-# CMake file for jemalloc
-#
-
 function(do_build_jemalloc)
     set(jemalloc_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/deps/jemalloc)
     set(jemalloc_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/deps/jemalloc)

@@ -25,6 +25,13 @@ public:
 
     inline void dealloc(ptr_t ptr) { free(ptr); }
 
+    // FIXME: How to implement `realloc` ?
+    inline ptr_t realloc(ptr_t ptr, int n) {
+        if (n == 0) return NULL;
+//        this->free(ptr);
+        return this->alloc(n);
+    }
+
     inline void free(ptr_t ptr) {
         jedallocx(ptr, id);
     }
@@ -70,7 +77,7 @@ public:
 
         extent_hooks_t *new_hooks = &hooks;
         jemallctl("arenas.create", (void *) (&arena_id), &sz,
-                  (void *) (&new_hooks), sizeof(extent_hooks_t *));
+                  (void *) (&new_hooks), sizeof(extent_hooks_t * ));
         jemallctl("tcache.create", (void *) (&cache_id), &sz, nullptr, 0);
         return new Allocator(MALLOCX_ARENA(arena_id) | MALLOCX_TCACHE(cache_id));
         //return new Allocator(MALLOCX_ARENA(arena_id));
@@ -193,6 +200,10 @@ class AllocHelper {
 public:
     static void *_malloc(size_t size) {
         return (void *) Alloc::get_thread_allocator()->alloc(size);
+    }
+
+    static void *_realloc(ptr_t ptr, size_t n) {
+        return (void *) Alloc::get_thread_allocator()->realloc(ptr, n);
     }
 
     static void _free(void *ptr) {
