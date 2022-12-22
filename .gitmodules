@@ -1,0 +1,3 @@
+[submodule "jemalloc-wrapper/deps/jemalloc"]
+	path = jemalloc-wrapper/deps/jemalloc
+	url = https://github.com/jemalloc/jemalloc.git
