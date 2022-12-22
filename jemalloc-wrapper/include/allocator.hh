@@ -26,8 +26,8 @@ public:
     inline void dealloc(ptr_t ptr) { free(ptr); }
 
     // FIXME: How to implement `realloc` ?
-    inline ptr_t realloc(ptr_t ptr, int n) {
-        return jerealloc(ptr, n);
+    inline ptr_t realloc(ptr_t ptr, int n, int flag = 0) {
+        return jerallocx(ptr, n, id | flag);
     }
 
     inline void free(ptr_t ptr) {
