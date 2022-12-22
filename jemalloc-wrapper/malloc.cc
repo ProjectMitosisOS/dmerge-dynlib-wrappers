@@ -46,9 +46,7 @@ static void init(void) {
 extern "C" {
 //void *calloc(size_t count, size_t size) {
 //    if (!real_calloc) init();
-////    void *ptr = real_malloc(count * size);
-////    memset(ptr, 0, count * size);
-////    return ptr;
+////    assert(0);
 //    return real_calloc(count, size);
 //}
 
