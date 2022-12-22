@@ -9,7 +9,6 @@ static void *(*real_realloc)(void *, size_t) = NULL;
 
 static void *(*real_calloc)(size_t, size_t) = NULL; // not used
 
-
 static void (*real_free)(void *) = NULL;
 
 static uint64_t BASE = 0x4ffff5a00000;
