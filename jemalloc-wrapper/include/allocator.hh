@@ -4,6 +4,9 @@
 #include <mutex>
 #include <functional>
 #include <iostream>
+#include <unistd.h>
+#include <sys/mman.h>
+#include <fcntl.h>
 
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #define likely(x) __builtin_expect(!!(x), 1)
@@ -67,7 +70,7 @@ public:
 
         extent_hooks_t *new_hooks = &hooks;
         jemallctl("arenas.create", (void *) (&arena_id), &sz,
-                  (void *) (&new_hooks), sizeof(extent_hooks_t * ));
+                  (void *) (&new_hooks), sizeof(extent_hooks_t *));
         jemallctl("tcache.create", (void *) (&cache_id), &sz, nullptr, 0);
         return new Allocator(MALLOCX_ARENA(arena_id) | MALLOCX_TCACHE(cache_id));
         //return new Allocator(MALLOCX_ARENA(arena_id));
@@ -182,4 +185,27 @@ extent_hooks_t AllocatorMaster<N>::hooks = {
         AllocatorMaster<N>::extent_purge_forced_hook,
         AllocatorMaster<N>::extent_split_hook,
         AllocatorMaster<N>::extent_merge_hook
+};
+
+
+class AllocHelper {
+    using Alloc = AllocatorMaster<73>;
+public:
+    static void *_malloc(size_t size) {
+        return (void *) Alloc::get_thread_allocator()->alloc(size);
+    }
+
+    static void _free(void *ptr) {
+        Alloc::get_thread_allocator()->dealloc(ptr);
+    }
+
+    static void _init(uint64_t base_addr, uint64_t mem_sz) {
+        auto ptr = mmap((void *) base_addr, mem_sz,
+                        PROT_READ | PROT_WRITE | PROT_EXEC,
+                        MAP_PRIVATE | MAP_ANON, -1, 0);
+        Alloc::init((char *) ptr, mem_sz);
+        for (int i = 0; i < mem_sz; ++i) {
+            *(char *) (base_addr + i) = '\0';
+        }
+    }
 };
