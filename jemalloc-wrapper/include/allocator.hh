@@ -27,9 +27,7 @@ public:
 
     // FIXME: How to implement `realloc` ?
     inline ptr_t realloc(ptr_t ptr, int n) {
-        if (n == 0) return NULL;
-//        this->free(ptr);
-        return this->alloc(n);
+        return jerealloc(ptr, n);
     }
 
     inline void free(ptr_t ptr) {

@@ -1,6 +1,6 @@
 #include <dlfcn.h>
 #include <cstddef>
-
+#include <cassert>
 #include "include/allocator.hh"
 
 static void *(*real_malloc)(size_t) = NULL;
@@ -38,10 +38,10 @@ void *malloc(size_t size) {
     return ptr;
 }
 
-//void *realloc(void *ptr, size_t size) {
-//    if (!real_realloc) init();
-//    return real_realloc(ptr, size);
-//}
+void *realloc(void *ptr, size_t size) {
+    if (!real_realloc) init();
+    return real_realloc(ptr, size);
+}
 
 void free(void *ptr) {
     if (!real_free) init();
