@@ -13,6 +13,5 @@ add_library(malloc_wrapper SHARED malloc.cc)
 
 add_executable(main main.cc)
 target_link_libraries(malloc_wrapper ${JEMALLOC_STATIC_LIBRARY} pthread dl)
-target_link_libraries(main malloc_wrapper dl)
 
 
