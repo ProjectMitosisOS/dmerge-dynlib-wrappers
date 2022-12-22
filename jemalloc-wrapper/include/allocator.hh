@@ -1,5 +1,5 @@
-//#include "jemalloc/jemalloc.h"
-#include "../deps/jemalloc/include/jemalloc/jemalloc.h"
+#include "jemalloc/jemalloc.h"
+//#include "../deps/jemalloc/include/jemalloc/jemalloc.h"
 #include <cstring>
 #include <cstdint>
 #include <mutex>
@@ -34,6 +34,18 @@ public:
 
     inline void free(ptr_t ptr) {
         jedallocx(ptr, id);
+    }
+
+    inline ptr_t reallocf(ptr_t ptr, size_t size) {
+        return jerealloc(ptr, size);
+    }
+
+    inline ptr_t valloc(size_t size) {
+        return this->alloc(size);
+    }
+
+    inline ptr_t aligned_alloc(size_t alignment, size_t size) {
+        return jealigned_alloc(alignment, size);
     }
 
 private:
@@ -208,6 +220,18 @@ public:
 
     static void _free(void *ptr) {
         Alloc::get_thread_allocator()->dealloc(ptr);
+    }
+
+    static void *_reallocf(void *ptr, size_t size) {
+        return Alloc::get_thread_allocator()->reallocf(ptr, size);
+    }
+
+    static void *_valloc(size_t size) {
+        return Alloc::get_thread_allocator()->valloc(size);
+    }
+
+    static void *_aligned_alloc(size_t alignment, size_t size) {
+        return Alloc::get_thread_allocator()->aligned_alloc(alignment, size);
     }
 
     static void _init(uint64_t base_addr, uint64_t mem_sz) {

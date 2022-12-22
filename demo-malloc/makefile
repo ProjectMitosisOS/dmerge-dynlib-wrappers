@@ -12,3 +12,12 @@ run:
 	LD_PRELOAD=./libmalloc_wrapper.so ./main
 	LD_PRELOAD=./libmymalloc.so ./build/main
 	# LD_PRELOAD=./libmymalloc_lib.so ./main
+
+LD_PRELOAD=./libmalloc_wrapper.so go run ../main.go
+LD_PRELOAD=./libmalloc_wrapper.so ./main
+
+
+LD_PRELOAD=./libmalloc_wrapper.so gcc
+LD_PRELOAD=./libmalloc_wrapper.so ls
+LD_PRELOAD=./libmalloc_wrapper.so python
+LD_PRELOAD=./libmalloc_wrapper.so java
