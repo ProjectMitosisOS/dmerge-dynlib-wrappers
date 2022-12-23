@@ -2,6 +2,7 @@
 #include <cstddef>
 #include <cassert>
 #include "include/allocator.hh"
+#include <cstdlib>
 
 static void *(*real_malloc)(size_t) = NULL;
 
@@ -19,7 +20,7 @@ static void *(*real_aligned_alloc)(size_t, size_t) = NULL;
 
 
 static uint64_t BASE = 0x4ffff5a00000;
-static uint64_t TOTAL_SZ = 1024 * 1024 * 512;
+static uint64_t TOTAL_SZ = 1024 * 1024 * 1024;
 
 /* Start of ZALLOC */
 #define ZALLOC_MAX 1024
@@ -51,7 +52,6 @@ static void *zalloc_internal(size_t size) {
  * */
 static int alloc_init_pending = 0;
 
-
 static void init(void) {
     alloc_init_pending = 1;
 #if 0
@@ -63,8 +63,6 @@ static void init(void) {
     real_valloc = (void *(*)(size_t)) dlsym(RTLD_NEXT, "valloc");
     real_aligned_alloc = (void *(*)(size_t, size_t)) dlsym(RTLD_NEXT, "aligned_alloc");
 #else
-    // Init for allocator
-    AllocHelper::_init(BASE, TOTAL_SZ);
     real_malloc = AllocHelper::_malloc;
     real_realloc = AllocHelper::_realloc;
     real_calloc = AllocHelper::_calloc;
@@ -72,6 +70,12 @@ static void init(void) {
     real_reallocf = AllocHelper::_reallocf;
     real_valloc = AllocHelper::_valloc;
     real_aligned_alloc = AllocHelper::_aligned_alloc;
+    // Init for allocator
+    char *end;
+    BASE = strtoll(getenv("BASE_HEX"), &end, 16);
+    TOTAL_SZ = strtoll(getenv("TOTAL_SZ_HEX"), &end, 16);
+//    printf("get num %lld\n", num);
+    AllocHelper::_init(BASE, TOTAL_SZ);
 #endif
     alloc_init_pending = 0;
 }
