@@ -15,6 +15,8 @@
 
 using ptr_t = void *;
 
+
+
 class Allocator {
 public:
     explicit Allocator(unsigned id) : id(id) {
@@ -27,9 +29,12 @@ public:
 
     inline void dealloc(ptr_t ptr) { free(ptr); }
 
-    // FIXME: How to implement `realloc` ?
     inline ptr_t realloc(ptr_t ptr, int n) {
         return jerealloc(ptr, n);
+    }
+
+    inline ptr_t calloc(size_t count, size_t size) {
+        return jecalloc(count, size);
     }
 
     inline void free(ptr_t ptr) {
@@ -216,6 +221,10 @@ public:
 
     static void *_realloc(ptr_t ptr, size_t n) {
         return (void *) Alloc::get_thread_allocator()->realloc(ptr, n);
+    }
+
+    static void *_calloc(size_t count, size_t size) {
+        return (void *) Alloc::get_thread_allocator()->calloc(count, size);
     }
 
     static void _free(void *ptr) {
