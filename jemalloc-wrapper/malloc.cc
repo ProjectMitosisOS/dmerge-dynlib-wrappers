@@ -54,15 +54,7 @@ static int alloc_init_pending = 0;
 
 static void init(void) {
     alloc_init_pending = 1;
-#if 0
-    real_malloc = (void *(*)(size_t)) dlsym(RTLD_NEXT, "malloc");
-    real_calloc = (void *(*)(size_t, size_t)) dlsym(RTLD_NEXT, "calloc");
-    real_realloc = (void *(*)(void *, size_t)) dlsym(RTLD_NEXT, "realloc");
-    real_free = (void (*)(void *)) dlsym(RTLD_NEXT, "free");
-    real_reallocf = (void *(*)(void *, size_t)) dlsym(RTLD_NEXT, "reallocf");
-    real_valloc = (void *(*)(size_t)) dlsym(RTLD_NEXT, "valloc");
-    real_aligned_alloc = (void *(*)(size_t, size_t)) dlsym(RTLD_NEXT, "aligned_alloc");
-#else
+
     real_malloc = AllocHelper::_malloc;
     real_realloc = AllocHelper::_realloc;
     real_calloc = AllocHelper::_calloc;
@@ -76,7 +68,6 @@ static void init(void) {
     TOTAL_SZ = strtoll(getenv("TOTAL_SZ_HEX"), &end, 16);
 //    printf("get num %lld\n", num);
     AllocHelper::_init(BASE, TOTAL_SZ);
-#endif
     alloc_init_pending = 0;
 }
 

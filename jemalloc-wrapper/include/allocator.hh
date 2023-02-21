@@ -16,7 +16,6 @@
 using ptr_t = void *;
 
 
-
 class Allocator {
 public:
     explicit Allocator(unsigned id) : id(id) {
@@ -27,14 +26,28 @@ public:
         return ptr;
     }
 
-    inline void dealloc(ptr_t ptr) { free(ptr); }
+    inline void dealloc(ptr_t ptr) { this->free(ptr); }
 
     inline ptr_t realloc(ptr_t ptr, int n) {
-        return jerealloc(ptr, n);
+        if (n == 0) {
+            this->free(ptr);
+            return NULL;
+        }
+
+        ptr_t new_ptr = this->alloc(n);
+
+        if (ptr != NULL) {
+            memcpy(new_ptr, ptr, n);
+            free(ptr);
+        }
+
+        return new_ptr;
     }
 
     inline ptr_t calloc(size_t count, size_t size) {
-        return jecalloc(count, size);
+        ptr_t res = this->alloc(count * size);
+        memset(res, 0, count * size);
+        return res;
     }
 
     inline void free(ptr_t ptr) {
