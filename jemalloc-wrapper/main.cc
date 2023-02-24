@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <sys/mman.h>
 
 int main() {
     printf("main func addr:%p\n", main);
@@ -18,4 +19,6 @@ int main() {
     free(calloc_ptr);
     free(pc1);
     free(pc2);
+    void *ptr = mmap(NULL, 1024, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, 0, 0);
+    printf("[main] mmap  %p\n", ptr);
 }
