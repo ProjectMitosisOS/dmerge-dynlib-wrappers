@@ -26,7 +26,7 @@ static uint64_t BASE = 0x4ffff5a00000;
 static uint64_t TOTAL_SZ = 1024 * 1024 * 1024;
 
 /* Start of ZALLOC */
-#define ZALLOC_MAX 4096
+#define ZALLOC_MAX 1024
 static void *zalloc_list[ZALLOC_MAX];
 static size_t zalloc_cnt = 0;
 
@@ -36,7 +36,7 @@ static void *zalloc_internal(size_t size) {
         return NULL;
     }
     /* Anonymous mapping ensures that pages are zero'd */
-#if 1
+#if 0
     void *ptr = valloc(size);
     if (ptr == NULL) {
         perror("alloc.so: zalloc_internal valloc failed");
@@ -88,7 +88,7 @@ extern "C" {
 
 void *calloc(size_t count, size_t size) {
     if (alloc_init_pending) {
-        fputs("[calloc] pending\n", stderr);
+//        fputs("[calloc] pending\n", stderr);
         return zalloc_internal(count * size);
     }
     if (!real_calloc) {
@@ -99,7 +99,7 @@ void *calloc(size_t count, size_t size) {
 
 void *malloc(size_t size) {
     if (alloc_init_pending) {
-        fputs("[malloc] pending\n", stderr);
+//        fputs("[malloc] pending\n", stderr);
         return zalloc_internal(size);
     }
     if (!real_malloc) {
@@ -111,7 +111,7 @@ void *malloc(size_t size) {
 
 void *realloc(void *ptr, size_t size) {
     if (alloc_init_pending) {
-        fputs("[realloc] pending\n", stderr);
+//        fputs("[realloc] pending\n", stderr);
         return zalloc_internal(size);
     }
     if (!real_realloc) {
@@ -122,11 +122,9 @@ void *realloc(void *ptr, size_t size) {
 
 void free(void *ptr) {
     if (alloc_init_pending) {
-        fputs("[free] pending\n", stderr);
         return;
     }
     if (!real_free) {
-        fputs("free: Start init\n", stderr);
         init();
     }
     if (!ptr) return;
@@ -144,7 +142,7 @@ static inline int my_munmap(void *addr, size_t length) {
     int (*fetch_munmap)(void *, size_t) = (int (*)(void *, size_t)) dlsym(RTLD_NEXT, "munmap");
     return fetch_munmap(addr, length);
 }
-#if 1
+#if 0
 void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset) {
     if (!real_mmap) {
         init();
